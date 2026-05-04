@@ -1,4 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&display=swap');
+
 @import "tailwindcss";
+
+html {
+  font-size: 90%;
+}
 
 :root {
   --background: #ffffff;
@@ -8,8 +14,24 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
+  --color-brand: #1e3a8a;
+  --color-brand-dark: #152a66;
+  --color-brand-deep: #0f2460;
+  --color-corporate-green: #7cb518;
+  --color-corporate-green-dark: #689f14;
+  --color-accent-sky: #039be5;
+  --color-surface: #fafbfd;
+  --color-surface-2: #eef2f8;
+  --color-border-molina: #c5d0e0;
+  --color-border-light: #e2e8f0;
+  --color-muted: #64748b;
+  --color-on-surface: #334155;
+  --color-foreground: #0f172a;
+  --shadow-header: 0 4px 28px rgba(15, 35, 90, 0.38);
+  --shadow-card: 0 1px 3px rgba(21, 42, 102, 0.06);
+  --shadow-card-hover: 0 14px 32px rgba(21, 42, 102, 0.12);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +44,17 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+input, textarea, select {
+  color: #111827 !important;
+  background-color: #ffffff !important;
+}
+
+input::placeholder {
+  color: #9ca3af !important;
+}
+
+.app-zoom-content {
+  zoom: 0.9;
 }

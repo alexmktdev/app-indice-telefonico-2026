@@ -1,0 +1,51 @@
+---
+description: Arquitectura base del proyecto - Aplica SIEMPRE a cualquier cambio o nueva funcionalidad
+alwaysApply: true
+---
+
+# Arquitectura y Principios del Proyecto
+
+Este proyecto es un sistema full-stack Next.js 15 + Firebase + TypeScript con arquitectura en capas y POO.
+
+## Arquitectura en Capas (orden estricto)
+
+Todo el código backend sigue este flujo obligatorio:
+
+API Route → Middleware (Rate Limit → CSRF → Auth) → Validación Zod → Sanitización → Service → Repository → Firestore
+
+- **API Routes** (`src/app/api/`): Solo orquestan el flujo, no contienen lógica de negocio.
+- **Services** (`src/lib/services/`): Toda la lógica de negocio va aquí. Usan repositorios, nunca acceden a Firestore directamente.
+- **Repositories** (`src/lib/repositories/`): Único punto de acceso a Firestore. Heredan de `BaseRepository<T>`.
+- **Middlewares** (`src/lib/middleware/`): Auth, rate limiting, CSRF. Se aplican en las API Routes.
+- **Helpers** (`src/lib/helpers/`): Funciones puras reutilizables (respuestas API, sanitización, Firestore).
+- **Validations** (`src/lib/validations/`): Schemas Zod. Toda validación de entrada ocurre aquí.
+- **Types** (`src/types/`): Interfaces, DTOs, tipos compartidos.
+
+## POO Obligatoria en Backend
+
+- Repositorios heredan de `BaseRepository<T>` (abstracta genérica).
+- Services usan composición (reciben repositorios).
+- Singletons para servicios globales (`auditService`, `authService`).
+- Errores tipados con clases propias (`NotFoundError`, `ConflictError`).
+- DTOs separados: `CreateXDTO`, `UpdateXDTO` (nunca usar la entidad directamente como input).
+
+## Seguridad: 12 Capas (No Negociable)
+
+Cada endpoint de escritura (POST/PUT/DELETE) DEBE aplicar en este orden:
+1. Rate Limiting (`checkRateLimit`)
+2. CSRF Verification (`verifyCsrfToken`)
+3. Authentication (`verifyAuth` o `verifyAdmin`)
+4. Zod Validation (schema correspondiente)
+5. Sanitización (`sanitizeObject`)
+6. Lógica de negocio (Service)
+7. Audit Logging (`auditService.log`)
+
+Nunca filtrar datos sensibles solo en el frontend. El backend es la fuente de verdad.
+
+## Frontend
+
+- Hooks personalizados para CRUD (`usePersonas`, `useUsuarios`).
+- Todas las llamadas API usan `fetchWithCsrf` (nunca `fetch` directo).
+- `AuthContext` provee estado global de autenticación.
+- Protección de rutas: Next.js middleware (Edge) + verificación en layout + backend.
+- UI condicional por rol pero la autorización real está en el backend.

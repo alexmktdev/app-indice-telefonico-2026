@@ -1,0 +1,52 @@
+---
+description: Estándares de código limpio, reutilizable y escalable
+alwaysApply: true
+---
+
+# Código Limpio y Escalable
+
+## Principios Obligatorios
+
+- **DRY**: No duplicar lógica. Si algo se repite, extraerlo a un helper, hook o clase base.
+- **Single Responsibility**: Cada archivo/función hace UNA cosa bien.
+- **Open/Closed**: Extender funcionalidad mediante herencia o composición, no modificando clases base.
+- **Tipado estricto**: Nunca usar `any` salvo casos excepcionales documentados con `eslint-disable`.
+
+## Convenciones de Código
+
+- Idioma del código: inglés para nombres técnicos, español para mensajes al usuario.
+- Imports con alias `@/` (nunca rutas relativas largas como `../../../`).
+- Archivos nombrados en kebab-case: `persona.service.ts`, `auth.middleware.ts`.
+- Interfaces con PascalCase: `Usuario`, `CreatePersonaDTO`.
+- Constantes en UPPER_CASE: `ROLES`, `SESSION_DURATION`, `RATE_LIMITS`.
+
+## Manejo de Errores
+
+- Errores tipados con clases propias (nunca `throw new Error('genérico')`).
+- El backend responde con `ApiResponse<T>` o `ApiError` (nunca JSON sin estructura).
+- Los errores de validación (Zod) incluyen `details` con el desglose por campo.
+- Los errores internos NUNCA revelan stack traces ni info sensible al cliente.
+
+## Nuevas Funcionalidades
+
+Al agregar una nueva entidad o módulo, crear en este orden:
+1. Types/DTOs en `src/types/`
+2. Schema Zod en `src/lib/validations/`
+3. Repository (hereda BaseRepository) en `src/lib/repositories/`
+4. Service (lógica de negocio) en `src/lib/services/`
+5. API Routes en `src/app/api/`
+6. Hook de frontend en `src/hooks/`
+7. Páginas/componentes en `src/app/` y `src/components/`
+
+## Respuestas API Estandarizadas
+
+Siempre usar los helpers de `api-response.helper.ts`:
+- `successResponse(data)` para 200
+- `createdResponse(data)` para 201
+- `badRequestResponse(msg, details)` para 400
+- `unauthorizedResponse()` para 401
+- `forbiddenResponse()` para 403
+- `notFoundResponse()` para 404
+- `conflictResponse()` para 409
+- `tooManyRequestsResponse()` para 429
+- `internalErrorResponse()` para 500

@@ -1,0 +1,42 @@
+// ─────────────────────────────────────────────────────────────
+// FIRESTORE SECURITY RULES
+// Regla base: DENEGAR TODO acceso directo desde el cliente.
+// Nuestro backend usa Firebase Admin SDK que bypasea estas reglas.
+// Estas rules protegen contra accesos directos maliciosos.
+//
+// INSTRUCCIONES:
+// 1. Ve a Firebase Console > Firestore > Rules
+// 2. Pega este contenido
+// 3. Clic en "Publicar"
+// ─────────────────────────────────────────────────────────────
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Regla por defecto: DENEGAR TODO
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Colección: personas → deny all (Admin SDK only)
+    match /personas/{personaId} {
+      allow read, write: if false;
+    }
+
+    // Colección: users → deny all (Admin SDK only)
+    match /users/{userId} {
+      allow read, write: if false;
+    }
+
+    // Colección: contactos_indice → deny all (Admin SDK only)
+    match /contactos_indice/{docId} {
+      allow read, write: if false;
+    }
+
+    // Colección: audit_logs → deny all (Admin SDK only)
+    match /audit_logs/{logId} {
+      allow read, write: if false;
+    }
+  }
+}
